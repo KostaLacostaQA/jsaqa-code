@@ -1,24 +1,27 @@
-let page;
-
-beforeEach(async () => {
-  page = await browser.newPage();
-  await page.goto("https://github.com/team");
-});
-
-afterEach(() => {
-  page.close();
-});
 
 describe("Github page tests", () => {
-  test("The h1 header content'", async () => {
+  let page;
+
+  beforeEach(async () => {
+    page = await browser.newPage();
+    await page.goto("https://github.com/team");
+  });
+  
+  afterEach(() => {
+    page.close();
+  });
+
+  test("The h1 header content", async () => {
+    jest.setTimeout(5000);
     const firstLink = await page.$("header div div a");
     await firstLink.click();
     await page.waitForSelector('h1');
     const title2 = await page.title();
-    expect(title2).toEqual('GitHub: Where the world builds software · GitHub');
+    expect(title2).toEqual("GitHub for teams · Build like the best teams on the planet · GitHub");
   });
 
   test("The first link attribute", async () => {
+    jest.setTimeout(3000);
     const actual = await page.$eval("a", link => link.getAttribute('href') );
     expect(actual).toEqual("#start-of-content");
   });
@@ -28,7 +31,41 @@ describe("Github page tests", () => {
     await page.waitForSelector(btnSelector, {
       visible: true,
     });
-    const actual = await page.$eval(btnSelector, link => link.textContent);
-    expect(actual).toContain("Sign up for free")
+    const actual = await page.$eval(btnSelector, link => link.textContent.trim());
+    expect(actual).toContain("Get started with Team");
   });
-});
+
+
+  describe("Other pages tests", () => {
+    let otherPage;
+
+    beforeEach(async () => {
+      otherPage = await browser.newPage();
+      await otherPage.goto("https://github.com/security");
+    });
+
+    afterEach(() => {
+      otherPage.close();
+    });
+
+    test("The h1 header content on other page", async () => {
+      const header = await otherPage.waitForSelector("h1");
+      const title = await otherPage.evaluate(element => element.textContent, header);
+      expect(title.trim()).toEqual("Trusted by millions of developers");
+    });
+
+    test("The first link attribute on other page", async () => {
+      const actual = await otherPage.$eval("a", link => link.getAttribute('href'));
+      expect(actual).toEqual("#start-of-content");
+    });
+
+    test("The page contains Sign in button on other page", async () => {
+      const btnSelector = "a.HeaderMenu-link--sign-in"
+      await otherPage.waitForSelector(btnSelector, {
+        visible: true,
+      });
+      const actual = await otherPage.$eval(btnSelector, link => link.textContent);
+      expect(actual).toContain("Sign in")
+    });
+  });
+ });

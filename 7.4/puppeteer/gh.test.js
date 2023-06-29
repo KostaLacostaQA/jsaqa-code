@@ -12,19 +12,17 @@ describe("Github page tests", () => {
   });
 
   test("The h1 header content", async () => {
-    jest.setTimeout(5000);
     const firstLink = await page.$("header div div a");
     await firstLink.click();
     await page.waitForSelector('h1');
     const title2 = await page.title();
     expect(title2).toEqual("GitHub for teams · Build like the best teams on the planet · GitHub");
-  });
+  }, 10000);
 
   test("The first link attribute", async () => {
-    jest.setTimeout(3000);
     const actual = await page.$eval("a", link => link.getAttribute('href') );
     expect(actual).toEqual("#start-of-content");
-  });
+  }, 10000);
 
   test("The page contains Sign in button", async () => {
     const btnSelector = ".btn-large-mktg.btn-mktg";
@@ -33,7 +31,7 @@ describe("Github page tests", () => {
     });
     const actual = await page.$eval(btnSelector, link => link.textContent.trim());
     expect(actual).toContain("Get started with Team");
-  });
+  }, 10000);
 
 
   describe("Other pages tests", () => {
@@ -52,18 +50,18 @@ describe("Github page tests", () => {
       const header = await otherPage.waitForSelector("h1");
       const title = await otherPage.evaluate(element => element.textContent, header);
       expect(title.trim()).toEqual("Trusted by millions of developers");
-    });
+    }, 10000);
 
     test("The first link attribute on other page", async () => {
       const actual = await otherPage.$eval("a", link => link.getAttribute('href'));
       expect(actual).toEqual("#start-of-content");
-    });
+    }, 10000);
 
     test("The page contains Sign in button on other page", async () => {
       const btnSelector = "a.HeaderMenu-link--sign-in"
       await otherPage.waitForSelector(btnSelector, {
         visible: true,
-      });
+      }, 10000);
       const actual = await otherPage.$eval(btnSelector, link => link.textContent);
       expect(actual).toContain("Sign in")
     });

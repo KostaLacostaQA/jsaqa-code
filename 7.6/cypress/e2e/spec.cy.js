@@ -1,4 +1,4 @@
-describe('template spec', () => {
+describe('sign in', () => {
 
 beforeEach(() => {
   cy.visit('/')
